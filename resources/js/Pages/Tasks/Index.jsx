@@ -82,6 +82,7 @@ export default function Index({ auth, tasks }) {
             }
         >
             <Head title="Tasks" />
+            {/* TODO: add due date to form */}
             <div className="py-12">
                 {/* sort tasks butons fr priority and date */}
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
