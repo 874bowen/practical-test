@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TaskController;
 use Illuminate\Foundation\Application;
@@ -15,18 +16,7 @@ Route::get('/', function () {
     ]);
 });
 
-Route::get('/dashboard', function () {
-    // TODO: Move this to a controller
-    $task_priorities = auth()->user()->tasks()
-        ->selectRaw('priority_id, count(*) as count, DATE_FORMAT(created_at, "%Y-%m") as month')
-        ->where('created_at', '>=', now()->subMonths(6))
-        ->groupBy('priority_id', 'month')
-        ->orderBy('priority_id')
-        ->get();
-    return Inertia::render('Dashboard', [
-        'task_priorities' => $task_priorities   
-    ]);
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');   
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
