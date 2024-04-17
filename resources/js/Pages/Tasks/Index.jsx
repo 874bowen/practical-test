@@ -2,6 +2,7 @@ import DangerButton from "@/Components/DangerButton";
 import PrimaryButton from "@/Components/PrimaryButton";
 import SecondaryButton from "@/Components/SecondaryButton";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
+import initialTaskState from "@/Constants/constants";
 import { Head } from "@inertiajs/react";
 import { useForm } from "@inertiajs/react";
 import { useState } from "react";
@@ -16,19 +17,10 @@ export default function Index({ auth, tasks }) {
         patch: patchTask,
         delete: deleteTask,
         processing,
-    } = useForm({
-        title: "",
-        description: "",
-        priority_id: 1,
-    });
+    } = useForm(initialTaskState);
 
     const resetTask = () => {
-        // TODO: take the task object into a separate file
-        setTask({
-            title: "",
-            description: "",
-            priority: 1,
-        });
+        setTask(initialTaskState);
     };
 
     const handleChange = (e) => {
@@ -37,16 +29,7 @@ export default function Index({ auth, tasks }) {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        if (isEditing) {
-            handleSubmitEdit();
-        } else {
-            postTask(route("tasks.store"), {
-                onSuccess: () => {
-                    resetTask();
-                    setShowTaskForm(false);
-                },
-            });
-        }
+        isEditing ? handleSubmitEdit() : handlePost();
     };
 
     const handleShowEditForm = (task) => {
@@ -55,8 +38,8 @@ export default function Index({ auth, tasks }) {
         setTask(task);
     };
 
-    const handleSubmitEdit = (e) => {
-        patchTask(route("tasks.update", task.id), {
+    const handlePost = () => {
+        postTask(route("tasks.store"), {
             onSuccess: () => {
                 resetTask();
                 setShowTaskForm(false);
@@ -64,12 +47,21 @@ export default function Index({ auth, tasks }) {
         });
     }
 
+    const handleSubmitEdit = (e) => {
+        patchTask(route("tasks.update", task.id), {
+            onSuccess: () => {
+                resetTask();
+                setIsEditing(false);
+                setShowTaskForm(false);
+            },
+        });
+    };
+    
     const handleDelete = (id) => {
         if (confirm("Are you sure you want to delete this task?")) {
             deleteTask(route("tasks.destroy", id));
         }
     };
-
     return (
         <AuthenticatedLayout
             user={auth.user}
@@ -142,14 +134,14 @@ export default function Index({ auth, tasks }) {
                                     </div>
                                     <div className="mb-4">
                                         <label
-                                            htmlFor="priority"
+                                            htmlFor="priority_id"
                                             className="block text-sm font-medium text-gray-700"
                                         >
                                             Priority
                                         </label>
                                         <select
-                                            id="priority"
-                                            name="priority"
+                                            id="priority_id"
+                                            name="priority_id"
                                             value={task.priority_id}
                                             onChange={handleChange}
                                             className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
