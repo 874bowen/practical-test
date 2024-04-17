@@ -8,6 +8,7 @@ import { useForm } from "@inertiajs/react";
 import { useState } from "react";
 
 export default function Index({ auth, tasks }) {
+    const [allTasks, setAllTasks] = useState(tasks);
     const [showTaskForm, setShowTaskForm] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
     const {
@@ -62,6 +63,15 @@ export default function Index({ auth, tasks }) {
             deleteTask(route("tasks.destroy", id));
         }
     };
+
+    function sortTasksByPriority(allTasks) {
+        setAllTasks([... allTasks.sort((a, b) => b.priority_id - a.priority_id)]);
+    }
+
+    function sortTasksByCreatedAt(allTasks) {
+        setAllTasks([... allTasks.sort((a, b) => new Date(b.created_at) - new Date(a.created_at))]);
+    }
+
     return (
         <AuthenticatedLayout
             user={auth.user}
@@ -73,9 +83,26 @@ export default function Index({ auth, tasks }) {
         >
             <Head title="Tasks" />
             <div className="py-12">
+                {/* sort tasks butons fr priority and date */}
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
                     <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                        {/* create task button */}
+                        <div className="p-6 bg-white border-b border-gray-200 flex justify-between items-center">
+                            <h3 className="text-lg text-gray-900 font-semibold">
+                                Sort Tasks
+                            </h3>
+                            <div className="flex gap-2">
+                                <SecondaryButton onClick={() => sortTasksByPriority(allTasks)}>
+                                    By Priority
+                                </SecondaryButton>
+                                <SecondaryButton onClick={() => sortTasksByCreatedAt(allTasks)}>
+                                    By Date
+                                </SecondaryButton>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
+                    <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                         <div className="p-6 bg-white border-b border-gray-200 flex justify-between items-center">
                             <h3 className="text-lg text-gray-900 font-semibold">
                                 Create Task
@@ -162,9 +189,9 @@ export default function Index({ auth, tasks }) {
 
                         {/* tasks */}
                         <div className="p-6 text-gray-900">
-                            {tasks.length ? (
+                            {allTasks.length ? (
                                 <ul>
-                                    {tasks.map((task) => (
+                                    {allTasks.map((task) => (
                                         <li key={task.id}>
                                             {/* style title description and creatd at */}
                                             <h3 className="text-lg font-semibold flex justify-between">
