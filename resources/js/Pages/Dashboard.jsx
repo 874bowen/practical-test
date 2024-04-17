@@ -1,7 +1,35 @@
+import DashboardCard from '@/Components/DashboardCard';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head } from '@inertiajs/react';
 
-export default function Dashboard({ auth }) {
+export default function Dashboard({ auth, task_priorities }) {
+    function getPriorityColor(priority) {
+        switch (priority) {
+            case 3:
+                return 'red';
+            case 2:
+                return 'blue';
+            case 1:
+                return 'green';
+            default:
+                return 'gray';
+        }
+    }
+
+    function getPriorityTitle(priority) {
+        console.log(priority);
+        switch (priority) {
+            case 3:
+                return 'High Priority';
+            case 2:
+                return 'Medium Priority';
+            case 1:
+                return 'Low Priority';
+            default:
+                return 'Unknown Priority';
+        }
+    }
+
     return (
         <AuthenticatedLayout
             user={auth.user}
@@ -9,12 +37,11 @@ export default function Dashboard({ auth }) {
         >
             <Head title="Dashboard" />
 
-            <div className="py-12">
-                <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                    <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                        <div className="p-6 text-gray-900">You're logged in!</div>
-                    </div>
-                </div>
+            <h3 className="text-lg font-semibold text-gray-800 my-2">Task Summary</h3>
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                {task_priorities.map((priority) => (
+                    <DashboardCard key={priority.priority_id} title={getPriorityTitle(priority.priority_id)} count={priority.count} color={getPriorityColor(priority.priority_id)} />
+                ))}
             </div>
         </AuthenticatedLayout>
     );
