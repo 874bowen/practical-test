@@ -15,6 +15,8 @@ A task management application is a software tool that allows users to keep track
 3. Inertia
 4. MySQl
 
+![alt text](image.png)
+
 ### Setting Up
 You need to have [Node.js](https://nodejs.org/en), [Composer](https://getcomposer.org/download/) and [Xampp](https://sourceforge.net/projects/xampp/) installed on your computer.
 
